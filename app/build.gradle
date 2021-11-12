@@ -18,7 +18,7 @@ repositories {
         name 'm2-dv8tion'
         url 'https://m2.dv8tion.net/releases'
     }
-
+ 
 
 }
 
@@ -41,3 +41,5 @@ application {
     // Define the main class for the application.
     mainClass = 'FitBot.Bot'
 }
+//U:Mike Botson(897347965365133355)
+//897347965365133355
