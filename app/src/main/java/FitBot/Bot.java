@@ -20,6 +20,7 @@ public class Bot extends ListenerAdapter
     public static void main(String[] args) throws LoginException
     {
         final String TOKEN = "ODk3MzQ3OTY1MzY1MTMzMzU1.YWUWag.-4JwT_DD6siMFViv0RwHZgX4feE";
+        final String ALIEN_TEST_SERVER_GUILD_ID = "848849465850462281";
         // We only need 2 intents in this bot. We only respond to messages in guilds and private channels.
         // All other events will be disabled.
         JDA jda  = JDABuilder.createLight(TOKEN, GatewayIntent.GUILD_MESSAGES, GatewayIntent.DIRECT_MESSAGES)
@@ -32,28 +33,25 @@ public class Bot extends ListenerAdapter
             e.printStackTrace();
         }
         //jda.upsertCommand("track", "track a workout").queue(); // This can take up to 1 hour to show up in the client
-        jda.getGuildById("848849465850462281").upsertCommand("track", "track a workout")
+        jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("track", "track a workout")
             .addOption(OptionType.STRING, "description", "briefly describe your workout")
             .queue(); // WAIT TILL DISCORD API IS UPDATED TO SUPPORT ATTACHMENTS IN SLASH COMMAND OPTIONS
-        jda.getGuildById("848849465850462281").upsertCommand("break", "take a break if you need time off. e.g. feeling ill or overloaded with work")
+        jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("break", "take a break if you need time off. e.g. feeling ill or overloaded with work")
             .addOption(OptionType.STRING, "reason", "What is your reason for taking time off?")
             .addOption(OptionType.INTEGER, "days", "How many days do you plan to take off? (you may end your time off early)")
             .queue(); 
-        jda.getGuildById("848849465850462281").upsertCommand("end-break", "take a break if you need time off. e.g. feeling ill or overloaded with work")
+        jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("end-break", "end your break and get back to working out")
             .queue(); 
-        jda.getGuildById("848849465850462281").upsertCommand("quit", "quit the server (potentially irreversible)")
+        jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("quit", "quit the server (potentially irreversible)")
             .addOption(OptionType.STRING, "security", "Are you sure (yes/no)?")
             .queue(); 
-        jda.getGuildById("848849465850462281").upsertCommand("suggestion", "provide an improvement suggestion for me")
+        jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("suggestion", "provide an improvement suggestion for me")
             .addOption(OptionType.STRING, "suggestion", "how should I improve?")
             .queue();
-        jda.getGuildById("848849465850462281").upsertCommand("set-aim", "what is your aim for this cycle?")
+        jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("set-aim", "what is your aim for this cycle?")
             .addOption(OptionType.STRING, "aim", "describe your aim")
             .queue();
-        jda.getGuildById("848849465850462281").upsertCommand("change-aim", "change your aim for the cycle")
-            .addOption(OptionType.STRING, "new-aim", "describe your new aim")
-            .queue();
-        jda.getGuildById("848849465850462281").upsertCommand("get-data", "what is your aim for this cycle?")
+        jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("get-data", "what is your aim for this cycle?")
             .queue();
     }
     
@@ -110,10 +108,6 @@ public class Bot extends ListenerAdapter
         } else if (event.getName().equals("set-aim")) {
             try {
                 event.reply(String.format("Hi %s, your aim has been set!\nAim: %s\n\nGood Luck %s!!!",username,event.getOption("aim").getAsString(),username)).queue();
-            } catch (Exception e) {e.printStackTrace();}
-        } else if (event.getName().equals("change-aim")) {
-            try {
-                event.reply(String.format("Hi %s, your aim has been modified.",username)).queue();
             } catch (Exception e) {e.printStackTrace();}
         } else if (event.getName().equals("get-data")) {
             try {
