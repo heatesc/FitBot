@@ -55,7 +55,6 @@ public class Bot extends ListenerAdapter
             .queue();
         jda.getGuildById("848849465850462281").upsertCommand("get-data", "what is your aim for this cycle?")
             .queue();
-        
     }
     
     /* @Override
@@ -110,7 +109,7 @@ public class Bot extends ListenerAdapter
             } catch (Exception e) {e.printStackTrace();}
         } else if (event.getName().equals("set-aim")) {
             try {
-                event.reply(String.format("Hi %s, your aim has been set!",username)).queue();
+                event.reply(String.format("Hi %s, your aim has been set!\nAim: %s\n\nGood Luck %s!!!",username,event.getOption("aim").getAsString(),username)).queue();
             } catch (Exception e) {e.printStackTrace();}
         } else if (event.getName().equals("change-aim")) {
             try {
