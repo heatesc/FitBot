@@ -18,7 +18,7 @@ create table Cycle_User_Aims (
     reflection text,
     user_ char(18) references User_(discord_user_id),
     start_date_ date primary key,
-    end_date date
+    -- end_date date
 );
 
 create table Cycle (

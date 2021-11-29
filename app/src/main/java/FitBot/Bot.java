@@ -32,6 +32,7 @@ public class Bot extends ListenerAdapter
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        
         //jda.upsertCommand("track", "track a workout").queue(); // This can take up to 1 hour to show up in the client
         jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("track", "track a workout")
             .addOption(OptionType.STRING, "description", "briefly describe your workout")
@@ -52,6 +53,12 @@ public class Bot extends ListenerAdapter
             .addOption(OptionType.STRING, "aim", "describe your aim")
             .queue();
         jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("get-data", "what is your aim for this cycle?")
+            .queue();
+        jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("start-cycle", "Start a cycle!")
+            .addOption(OptionType.STRING, "end-date", "format: YYYY:MM:DD (note: SYD date/time!)")
+            .queue();
+        jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("end-cycle", "end cycle early?")
+            .addOption(OptionType.STRING, "hmm", "are you sure? (y/n)")
             .queue();
     }
     
@@ -113,6 +120,11 @@ public class Bot extends ListenerAdapter
             try {
                 event.reply(String.format("Hi %s, here is your data.",username)).queue();
             } catch (Exception e) {e.printStackTrace();}
+        } else if (event.getName().equals("start-cycle")) {
+            try {
+                event.reply(String.format("Hi %s, you have started the cycle. Good luck @everyone.",username)).queue();
+            } catch (Exception e) {e.printStackTrace();}
+            DatabaseUtility.startCycle(event.getOption("end-date").getAsString());
         } 
 
         //System.out.println(event.getCommandString());}
