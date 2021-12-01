@@ -1,12 +1,17 @@
 package FitBot;
+import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import net.dv8tion.jda.api.*;
 
 
 public class DatabaseUtility {
-    public static Database x = new Database("jdbc:postgresql://127.0.0.1:5432/dbot_dbs", "postgres", "fuck");
+    public static Database x = new Database("jdbc:postgresql://127.0.0.1:5432/postgres", "postgres", "fuck");
     
     public static boolean startCycle(String endDate) {
-        String query = String.format("insert into fitness_db.workout cycle values ('today', '%s')", endDate);
+        String query = String.format("insert into fitness_db.cycle values ('now', '%s')", endDate);
         return x.sql_update(query);
     }
 
@@ -28,7 +33,9 @@ public class DatabaseUtility {
     }
 
     public static boolean currentlyInCycle() {
-        return false;
+        String query = String.format("select end_date from fitness_db.cycle where end_date >= 'today'");
+        System.out.println(x.sql_getString(query, "end_date") != null);
+        return (x.sql_getString(query, "end_date") != null);
     }
 
     public static void addWorkout(String userID, String evidenceDescription) {

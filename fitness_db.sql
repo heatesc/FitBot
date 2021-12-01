@@ -1,6 +1,6 @@
 begin transaction;
 
-drop schema if exists fitness_db;
+drop schema if exists fitness_db cascade;
 create schema fitness_db;
 set search_path to 'fitness_db';
 
@@ -22,7 +22,7 @@ create table Cycle_User_Aims (
 );
 
 create table Cycle (
-    start_date_ date primary key,
+    start_date_ timestamp primary key,
     end_date date
 );
 

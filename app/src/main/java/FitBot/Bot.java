@@ -60,6 +60,8 @@ public class Bot extends ListenerAdapter
         jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("end-cycle", "end cycle early?")
             .addOption(OptionType.STRING, "hmm", "are you sure? (y/n)")
             .queue();
+        jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("check-cycle-status", "Check if a cycle is currently running")
+            .queue();
     }
     
     /* @Override
@@ -121,14 +123,40 @@ public class Bot extends ListenerAdapter
                 event.reply(String.format("Hi %s, here is your data.",username)).queue();
             } catch (Exception e) {e.printStackTrace();}
         } else if (event.getName().equals("start-cycle")) {
-            try {
-                event.reply(String.format("Hi %s, you have started the cycle. Good luck @everyone.",username)).queue();
-            } catch (Exception e) {e.printStackTrace();}
-            DatabaseUtility.startCycle(event.getOption("end-date").getAsString());
-        } 
-
-        //System.out.println(event.getCommandString());}
-        
+            if (DatabaseUtility.currentlyInCycle()) {
+                try {
+                    event.reply(String.format("Hi %s, there is already a cycle running.",username))
+                    .setEphemeral(true)
+                    .queue();
+                } catch (Exception e) {e.printStackTrace();}
+            } else if (event.getOption("end-date") == null) {
+                try {
+                    event.reply(String.format("Hi %s, to start a cycle, you must specify an end_date. Please try again.",username))
+                    .setEphemeral(true)
+                    .queue();
+                } catch (Exception e) {e.printStackTrace();}
+            } else {
+                if (!DatabaseUtility.startCycle(event.getOption("end-date").getAsString())) {
+                    try {
+                        event.reply("Invalid date format entered. Please try again with the specified format.");
+                    } catch (Exception e) {e.printStackTrace();}
+                } else {
+                    try {
+                        event.reply(String.format("Hi %s, you have started the cycle. Good luck @everyone.",username)).queue();
+                    } catch (Exception e) {e.printStackTrace();}
+                }
+            }
+        } else if (event.getName().equals("check-cycle-status")) {
+            if (!DatabaseUtility.currentlyInCycle()) {
+                try {
+                    event.reply(String.format("Hi, %s, there is no cycle running.",username)).queue();
+                } catch (Exception e) {e.printStackTrace();}
+            } else {
+                try {
+                    event.reply(String.format("Hi, %s, a cycle is running.",username)).queue();
+                } catch (Exception e) {e.printStackTrace();}
+            }
+            
+        }
     }
-    
 }
