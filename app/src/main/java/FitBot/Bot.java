@@ -17,6 +17,9 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 public class Bot extends ListenerAdapter
 {
+
+    public static SlashResponseHandler handleSlash = new SlashResponseHandler();
+
     public static void main(String[] args) throws LoginException
     {
         final String TOKEN = "ODk3MzQ3OTY1MzY1MTMzMzU1.YWUWag.-4JwT_DD6siMFViv0RwHZgX4feE";
@@ -52,16 +55,38 @@ public class Bot extends ListenerAdapter
         jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("set-aim", "what is your aim for this cycle?")
             .addOption(OptionType.STRING, "aim", "describe your aim")
             .queue();
-        jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("get-data", "what is your aim for this cycle?")
+        jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("get-report", "get a report on progress across cycles")
             .queue();
         jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("start-cycle", "Start a cycle!")
-            .addOption(OptionType.STRING, "end-date", "format: YYYY:MM:DD (note: SYD date/time!)")
+            .addOption(OptionType.STRING, "end-date", "format: YYYY-MM-DD (note: SYD date/time!)")
             .queue();
         jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("end-cycle", "end cycle early?")
             .addOption(OptionType.STRING, "hmm", "are you sure? (y/n)")
             .queue();
         jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("check-cycle-status", "Check if a cycle is currently running")
             .queue();
+        jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("reflection", "add a reflection based on your aim for the current cycle")
+            .addOption(OptionType.STRING, "reflection", "write a reflection")
+            .queue();
+        jda.getGuildById(ALIEN_TEST_SERVER_GUILD_ID).upsertCommand("register", "register for the current cycle")
+            .queue();
+    }
+
+    @Override
+    public void onSlashCommand(SlashCommandEvent event)
+    {
+        if (event.getName().equals("break")) handleSlash.breakResponse(event); // testing
+        else if (event.getName().equals("track")) handleSlash.trackResponse(event); // testing
+        else if (event.getName().equals("end-break")) handleSlash.endBreakResponse(event); //testing
+        else if (event.getName().equals("quit")) handleSlash.quitResponse(event); //testing
+        else if (event.getName().equals("suggestion")) handleSlash.suggestionResponse(event); //testing
+        else if (event.getName().equals("set-aim"))  handleSlash.setAimResponse(event);//testing
+        else if (event.getName().equals("reflection"))  handleSlash.reflectionResponse(event);//testing
+        else if (event.getName().equals("get-report")) handleSlash.getReportResponse(event); //todo
+        else if (event.getName().equals("start-cycle")) handleSlash.startCycleResponse(event);//testing
+        else if (event.getName().equals("check-cycle-status")) handleSlash.checkCycleStatusResponse(event);//testing
+        else if (event.getName().equals("end-cycle")) handleSlash.endCycleResponse(event);//testing
+        else if (event.getName().equals("register")) handleSlash.registerResponse(event);//testing
     }
     
     /* @Override
@@ -88,75 +113,6 @@ public class Bot extends ListenerAdapter
         }
     }  */
 
-    @Override
-    public void onSlashCommand(SlashCommandEvent event)
-    {
-        System.out.println(event.getName());
-        String username = event.getUser().getAsMention();
-        if (event.getName().equals("break")) {
-            try {
-                event.reply(String.format("Hi %s, your time off has now started. You have %d days remaining. If you wish to end your break early use the /endbreak command.",username,event.getOption("days").getAsLong()))
-                .queue();
-            } catch (Exception e) {e.printStackTrace();}
-        } else if (event.getName().equals("track")) {
-            try {
-                event.reply(String.format("Hi %s, your workout has been tracked.",username)).queue();
-            } catch (Exception e) {e.printStackTrace();}
-        } else if (event.getName().equals("end-break")) {
-            try {
-                event.reply(String.format("Hi %s, your break is over.",username)).queue();
-            } catch (Exception e) {e.printStackTrace();}
-        } else if (event.getName().equals("quit")) {
-            try {
-                event.reply(String.format("I haven't got the permission to kick server members, so feel free to hop off. Goodbye, %s",username)).queue();
-            } catch (Exception e) {e.printStackTrace();}
-        } else if (event.getName().equals("suggestion")) {
-            try {
-                event.reply(String.format("Thanks %s, I will take your suggestion into consideration.",username)).queue();
-            } catch (Exception e) {e.printStackTrace();}
-        } else if (event.getName().equals("set-aim")) {
-            try {
-                event.reply(String.format("Hi %s, your aim has been set!\nAim: %s\n\nGood Luck %s!!!",username,event.getOption("aim").getAsString(),username)).queue();
-            } catch (Exception e) {e.printStackTrace();}
-        } else if (event.getName().equals("get-data")) {
-            try {
-                event.reply(String.format("Hi %s, here is your data.",username)).queue();
-            } catch (Exception e) {e.printStackTrace();}
-        } else if (event.getName().equals("start-cycle")) {
-            if (DatabaseUtility.currentlyInCycle()) {
-                try {
-                    event.reply(String.format("Hi %s, there is already a cycle running.",username))
-                    .setEphemeral(true)
-                    .queue();
-                } catch (Exception e) {e.printStackTrace();}
-            } else if (event.getOption("end-date") == null) {
-                try {
-                    event.reply(String.format("Hi %s, to start a cycle, you must specify an end_date. Please try again.",username))
-                    .setEphemeral(true)
-                    .queue();
-                } catch (Exception e) {e.printStackTrace();}
-            } else {
-                if (!DatabaseUtility.startCycle(event.getOption("end-date").getAsString())) {
-                    try {
-                        event.reply("Invalid date format entered. Please try again with the specified format.");
-                    } catch (Exception e) {e.printStackTrace();}
-                } else {
-                    try {
-                        event.reply(String.format("Hi %s, you have started the cycle. Good luck @everyone.",username)).queue();
-                    } catch (Exception e) {e.printStackTrace();}
-                }
-            }
-        } else if (event.getName().equals("check-cycle-status")) {
-            if (!DatabaseUtility.currentlyInCycle()) {
-                try {
-                    event.reply(String.format("Hi, %s, there is no cycle running.",username)).queue();
-                } catch (Exception e) {e.printStackTrace();}
-            } else {
-                try {
-                    event.reply(String.format("Hi, %s, a cycle is running.",username)).queue();
-                } catch (Exception e) {e.printStackTrace();}
-            }
-            
-        }
-    }
+
+    
 }

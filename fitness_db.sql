@@ -8,29 +8,38 @@ drop table if exists User_ cascade;
 drop table if exists Cycle_User_Aims cascade;
 drop table if exists Cycle cascade;
 drop table if exists Workout cascade;
+drop table if exists Suggestion cascade;
 
 create table User_ (
-    discord_user_id char(18) primary key
+    discord_user_id char(18) primary key,
+    in_break boolean default false,
+    kicked boolean default false
 );
 
-create table Cycle_User_Aims (
+create table Cycle_User (
     aim text,
     reflection text,
     user_ char(18) references User_(discord_user_id),
-    start_date_ date primary key,
+    start_timestamp timestamp primary key,
     -- end_date date
+    free_days_left_in_week int default 2
 );
 
 create table Cycle (
     start_date_ timestamp primary key,
-    end_date date
+    end_date timestamp
 );
 
 create table Workout (
-    date_ date,
+    timestamp_ date,
     user_ char(18) references User_(discord_user_id),
     evidence_description text,
     number_ int default 1
+);
+
+create table Suggestion (
+    user_ char(18) references User_(discord_user_id),
+    suggestion text 
 );
 
 commit;
