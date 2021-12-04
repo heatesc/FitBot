@@ -18,7 +18,7 @@ import net.dv8tion.jda.api.entities.User;
 public class DatabaseUtility {
     public static Database x = new Database("jdbc:postgresql://127.0.0.1:5432/postgres", "postgres", "fuck");
     
-    public static boolean startCycle(String endDate) {
+    public static Boolean startCycle(String endDate) {
         String query = String.format("insert into fitness_db.cycle values ('now', date '%s' + time 'now')", endDate);
         return x.sql_update(query);
     }
@@ -58,24 +58,40 @@ public class DatabaseUtility {
     }
 
     public static boolean checkUserExists(User user) {
-        String query = String.format("select * from fitness_db.user_ where discord_user_id = '%s'",user.getId());
+        String query = String.format("select * from fitness_db.user_ where discord_user_id = '%s';",user.getId());
         return (x.sql_getString(query, "discord_user_id") != null);
     }
 
     public static boolean checkUserIsOnBreak(User user) {
-        String query = String.format("select in_break from fitness_db.user_ where discord_user_id = '%s'",user.getId());
+        String query = String.format("select in_break from fitness_db.user_ where discord_user_id = '%s';",user.getId());
         boolean value = x.sql_getBoolean(query, "in_break");
         return value;
     }
 
     public static void activateBreak(User user) {
         String userID = user.getId();
-        String query = String.format("update fitness_db.user_ set in_break = true where discord_user_id = '%s'",userID);
+        String query = String.format("update fitness_db.user_ set in_break = true where discord_user_id = '%s';",userID);
         x.sql_update(query);
     } 
 
-    public static void removeUser(User user) {
-        String query = String.format("delete from fitness_db.user_ where discord_user_id = '%s';",user.getId());
+    public static int getNumberOfRestDaysLeftForUser(String uid) {
+        String query = String.format("select free_days_left_in_week from fitness_db.cycle_user where user_ = '%s' and start_timestamp = '%s';",uid,getCycleStartTimestamp());
+        return x.sql_getInt(query, "free_days_left_in_week");
+
+    }
+
+    public static boolean checkUserOnBreak(String uid) {
+        String query = String.format("select in_break from fitness_db.user_ where user_ = '%s'",uid);
+        return x.sql_getBoolean(query, "in_break");
+    }
+
+    public static List<String> getUserWorkoutsForToday(String userID) {
+        String query = String.format("select evidence_description from fitness_db.workout where user_ = '%s' and timestamp > date 'today' - 1 + time 'now';");
+        return x.sql_getStrings(query, "evidence_description");
+    }
+
+    public static void removeUser(String userID) {
+        String query = String.format("delete from fitness_db.user_ where discord_user_id = '%s';",userID);
         x.sql_update(query);
     }
 

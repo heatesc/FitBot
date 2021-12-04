@@ -75,14 +75,14 @@ public class Bot extends ListenerAdapter
     @Override
     public void onSlashCommand(SlashCommandEvent event)
     {
-        if (event.getName().equals("break")) handleSlash.breakResponse(event); // testing
+        if (event.getName().equals("break")) handleSlash.breakResponse(event); // ok1
         else if (event.getName().equals("track")) handleSlash.trackResponse(event); // testing
         else if (event.getName().equals("end-break")) handleSlash.endBreakResponse(event); //testing
         else if (event.getName().equals("quit")) handleSlash.quitResponse(event); //testing
         else if (event.getName().equals("suggestion")) handleSlash.suggestionResponse(event); //testing
         else if (event.getName().equals("set-aim"))  handleSlash.setAimResponse(event);//testing
         else if (event.getName().equals("reflection"))  handleSlash.reflectionResponse(event);//testing
-        else if (event.getName().equals("get-report")) handleSlash.getReportResponse(event); //todo
+        else if (event.getName().equals("get-report")) handleSlash.getReportResponse(event); // ok1
         else if (event.getName().equals("start-cycle")) handleSlash.startCycleResponse(event);//testing
         else if (event.getName().equals("check-cycle-status")) handleSlash.checkCycleStatusResponse(event);//testing
         else if (event.getName().equals("end-cycle")) handleSlash.endCycleResponse(event);//testing

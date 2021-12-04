@@ -2,6 +2,8 @@ package FitBot;
 
 import javax.xml.crypto.Data;
 
+import org.checkerframework.checker.regex.qual.Regex;
+
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 public class SlashResponseHandler {
@@ -187,12 +189,20 @@ public class SlashResponseHandler {
                 .queue();
             } catch (Exception e) {e.printStackTrace();}
         } else {
-            if (!DatabaseUtility.startCycle(event.getOption("end-date").getAsString())) {
+            System.out.println("A");
+            
+            System.out.println(event.getOption("end-date").getAsString());
+            
+            if (!event.getOption("end-date").getAsString().matches("^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$")) {
+                System.out.println("B");
                 try {
-                    event.reply("Invalid date format entered. Please try again with the specified format.");
+                    event.reply("Invalid date format entered. Please try again with the specified format.").queue();;
                 } catch (Exception e) {e.printStackTrace();}
             } else {
+                DatabaseUtility.startCycle(event.getOption("end-date").getAsString());
+                System.out.println("C");
                 this.x.handleUpdates(event);
+                System.out.println("D");
                 try {
                     event.reply(String.format("Hi %s, you have started the cycle. Good luck @everyone, this cycle ends on %s",event.getUser().getAsMention(),event.getOption("end-date").getAsString()))
                     .queue();
@@ -261,8 +271,11 @@ public class SlashResponseHandler {
             try {
                 event.reply(String.format("Hi, %s, the cycle has been discontinued.",event.getUser().getAsMention())).queue();
             } catch (Exception e) {e.printStackTrace();}
+            TimedEventsHandler.endOfCycleUpdate(event);
             this.x.cancelTimedEvents();
         }
+
+        
     }
     
 }
