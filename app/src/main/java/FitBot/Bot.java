@@ -22,7 +22,7 @@ public class Bot extends ListenerAdapter
 
     public static void main(String[] args) throws LoginException
     {
-        final String TOKEN = "ODk3MzQ3OTY1MzY1MTMzMzU1.YWUWag.-4JwT_DD6siMFViv0RwHZgX4feE";
+        final String TOKEN = args[1];
         final String ALIEN_TEST_SERVER_GUILD_ID = "848849465850462281";
         // We only need 2 intents in this bot. We only respond to messages in guilds and private channels.
         // All other events will be disabled.
