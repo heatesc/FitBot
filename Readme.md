@@ -1,3 +1,5 @@
+Abandoned this project a while ago because I didn't think it was worth completing. Still some good java practice.
+
 # Mike Botson guide v1 
 
 **Table of contents**
